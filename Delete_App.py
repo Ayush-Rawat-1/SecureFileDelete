@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 import DODDeletion as DOD
+import CryptographicErasure as CE
 
 class PermanentDeleteSystem:
     def __init__(self, root):
@@ -30,14 +31,17 @@ class PermanentDeleteSystem:
 
         # Phase selection
         self.phase_var = tk.IntVar(value=3)  # Default to 3-phase
-        self.phase_label = tk.Label(root, text="Select Deletion Phase:")
+        self.phase_label = tk.Label(root, text="Select Deletion Method:")
         self.phase_label.pack(pady=5)
 
-        self.phase_3 = tk.Radiobutton(root, text="3-Phase", variable=self.phase_var, value=3)
+        self.phase_3 = tk.Radiobutton(root, text="DoD 3-Pass", variable=self.phase_var, value=3)
         self.phase_3.pack()
 
-        self.phase_7 = tk.Radiobutton(root, text="7-Phase", variable=self.phase_var, value=7)
+        self.phase_7 = tk.Radiobutton(root, text="DoD 7-Pass", variable=self.phase_var, value=7)
         self.phase_7.pack()
+
+        self.phase_crypto = tk.Radiobutton(root, text="Cryptographic Erasure", variable=self.phase_var, value=0)
+        self.phase_crypto.pack()
 
         # Progress bar
         self.progress = ttk.Progressbar(root, orient="horizontal", length=400, mode="determinate")
@@ -89,23 +93,30 @@ class PermanentDeleteSystem:
             return
 
         phases = self.phase_var.get()
+        crypto_handler = CE.CryptographicErasure(self.logger, self.update_progress)
+
         for file_path in self.file_paths:
             self.log_message(f"Processing: {file_path}")
 
-            if os.path.isdir(file_path) or os.path.isfile(file_path):
-                self.deletion_handler.perform_deletion(file_path, phases)
-            else:
-                self.log_message(f"Invalid path or file already deleted: {file_path}")
-                continue
+            try:
+                if os.path.isdir(file_path) or os.path.isfile(file_path):
+                    if phases == 0:
+                        crypto_handler.perform_deletion(file_path)
+                    else:
+                        self.deletion_handler.perform_deletion(file_path, phases)
 
-            self.logger.info(f"Completed deletion for: {file_path}")
-            self.log_message(f"Successfully deleted: {file_path}")
+                    self.logger.info(f"Completed deletion for: {file_path}")
+                    self.log_message(f"Successfully deleted: {file_path}")
+                else:
+                    self.log_message(f"Invalid path or file already deleted: {file_path}")
+            except Exception as e:
+                self.logger.error(f"Error during deletion of {file_path}: {e}")
+                self.log_message(f"Error during deletion of {file_path}: {e}")
 
         self.update_progress(0)
         self.file_paths = []
         self.file_label.config(text="No files selected")
         messagebox.showinfo("Success", "Deletion process completed!")
-
 
 if __name__ == "__main__":
     root = tk.Tk()

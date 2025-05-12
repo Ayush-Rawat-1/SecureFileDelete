@@ -5,23 +5,26 @@ class DODDeletion:
         self.logger = logger
         self.update_progress = update_progress
 
-    def dod_3_pass(self, file_path):
+    def dod_3_pass(self, file_path, isUpdate=True):
         try:
             file_size = os.path.getsize(file_path)
             with open(file_path, "wb") as file:
                 file.seek(0)
                 file.write(b"\x00" * file_size)
-                self.update_progress(33)
+                if isUpdate:
+                    self.update_progress(33)
                 self.logger.info(f"Pass 1/3: Overwritten with binary zeroes for {file_path}")
 
                 file.seek(0)
                 file.write(b"\xFF" * file_size)
-                self.update_progress(66)
+                if isUpdate:
+                    self.update_progress(66)
                 self.logger.info(f"Pass 2/3: Overwritten with binary ones for {file_path}")
 
                 file.seek(0)
                 file.write(os.urandom(file_size))
-                self.update_progress(100)
+                if isUpdate:
+                    self.update_progress(100)
                 self.logger.info(f"Pass 3/3: Overwritten with random bit pattern for {file_path}")
 
             return True
@@ -29,7 +32,7 @@ class DODDeletion:
             self.logger.error(f"Failed to overwrite file {file_path}: {e}")
             return False
 
-    def dod_7_pass(self, file_path):
+    def dod_7_pass(self, file_path, isUpdate=True):
         try:
             file_size = os.path.getsize(file_path)
             with open(file_path, "wb") as file:
@@ -44,8 +47,8 @@ class DODDeletion:
                     else:
                         file.write(os.urandom(file_size))
                         self.logger.info(f"Pass {i + 1}/7: Overwritten with random data for {file_path}")
-                        
-                    self.update_progress((i + 1) / 7 * 100)
+                    if isUpdate:
+                        self.update_progress((i + 1) / 7 * 100)
             self.logger.info(f"7-pass overwrite completed successfully for {file_path}")
             return True
         except Exception as e:
@@ -59,19 +62,28 @@ class DODDeletion:
             return  # Exit the function early
 
         if os.path.isdir(path):
+            self.update_progress(2)
+            total = 1
+            for root, dirs, files in os.walk(path):
+                total += len(files)+len(dirs)
+            completed=0
             for root, dirs, files in os.walk(path, topdown=False):
                 for file in files:
                     file_path = os.path.join(root, file)
                     if phases == 3:
-                        self.dod_3_pass(file_path)
+                        self.dod_3_pass(file_path=file_path,isUpdate=False)
                     else:
-                        self.dod_7_pass(file_path)
+                        self.dod_7_pass(file_path=file_path,isUpdate=False)
                     os.remove(file_path)
+                    completed+=1
+                    self.update_progress(int((completed / total) * 100))
                     self.logger.info(f"Deleted file: {file_path}")
 
                 for folder in dirs:
                     folder_path = os.path.join(root, folder)
                     os.rmdir(folder_path)
+                    completed+=1
+                    self.update_progress(int((completed / total) * 100))
                     self.logger.info(f"Deleted folder: {folder_path}")
             os.rmdir(path)
             self.logger.info(f"Deleted root folder: {path}")
