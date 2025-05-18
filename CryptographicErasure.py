@@ -1,5 +1,4 @@
 import os
-import secrets
 from base64 import b64decode
 from AESCipher import AESCipher
 
