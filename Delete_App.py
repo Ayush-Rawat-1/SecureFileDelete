@@ -1,10 +1,10 @@
 import os
-import logging
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
-from tkinter.scrolledtext import ScrolledText
+import logging
 import DODDeletion as DOD
 import CryptographicErasure as CE
+from tkinter import filedialog, messagebox, ttk
+from tkinter.scrolledtext import ScrolledText
 
 class PermanentDeleteSystem:
     def __init__(self, root):
