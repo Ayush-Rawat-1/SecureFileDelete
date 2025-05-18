@@ -8,24 +8,19 @@ class DODDeletion:
     def dod_3_pass(self, file_path, isUpdate=True):
         try:
             file_size = os.path.getsize(file_path)
+            patterns = [
+                b"\x00" * file_size,                   # Pass 1: Zeroes
+                b"\xFF" * file_size,                   # Pass 2: Ones
+                os.urandom(file_size)                  # Pass 3: Random
+            ]
+
             with open(file_path, "wb") as file:
-                file.seek(0)
-                file.write(b"\x00" * file_size)
-                if isUpdate:
-                    self.update_progress(33)
-                self.logger.info(f"Pass 1/3: Overwritten with binary zeroes for {file_path}")
-
-                file.seek(0)
-                file.write(b"\xFF" * file_size)
-                if isUpdate:
-                    self.update_progress(66)
-                self.logger.info(f"Pass 2/3: Overwritten with binary ones for {file_path}")
-
-                file.seek(0)
-                file.write(os.urandom(file_size))
-                if isUpdate:
-                    self.update_progress(100)
-                self.logger.info(f"Pass 3/3: Overwritten with random bit pattern for {file_path}")
+                for i, pattern in enumerate(patterns, start=1):
+                    file.seek(0)
+                    file.write(pattern)
+                    if isUpdate:
+                        self.update_progress(i * 33)
+                    self.logger.info(f"Pass {i}/3: Overwritten with {'zeroes' if i==1 else 'ones' if i==2 else 'random data'} for {file_path}")
 
             return True
         except Exception as e:
