@@ -1,26 +1,31 @@
-# Permanent Delete System
+# 🔒 Permanent Delete System
 
-A secure file deletion application built with Python and Tkinter that performs permanent deletion using the U.S. Department of Defense (DoD) standard overwrite algorithms. It supports both 3-pass and 7-pass deletion methods to ensure that files and folders are unrecoverable.
+A secure file sanitization and deletion tool built with **Python**. It supports both **DoD overwrite algorithms** (3-pass and 7-pass) and **AES-256 Cryptographic Erasure** to ensure that files and folders are permanently unrecoverable.
+
+---
 
 ## ✅ Features
 
-- GUI-based application for ease of use
-- Supports secure deletion of individual files and entire folders
-- Implements 3-pass and 7-pass DoD overwrite algorithms
-- Displays real-time progress of deletion
-- Maintains logs of all deletion activities
-- Select between 3-pass and 7-pass modes
-- Displays detailed logs within the application
+* GUI-based application for ease of use
+* Supports secure deletion of individual files and entire folders
+* Implements **DoD 3-Pass and 7-Pass overwrite algorithms**
+* Implements **AES-256 Cryptographic Erasure** (new)
+* Displays real-time progress of deletion
+* Maintains logs of all activities
+* Select between overwrite or encryption-based erasure modes
+* Displays detailed logs within the application
 
-## 🔐 Overwrite Methods
+---
 
-### 3-Pass DoD Method
+## 🔐 Deletion Methods
+
+### DoD 3-Pass Method
 
 1. Overwrite with binary zeroes (`0x00`)
 2. Overwrite with binary ones (`0xFF`)
 3. Overwrite with random data
 
-### 7-Pass DoD Method
+### DoD 7-Pass Method
 
 1. Overwrite with binary zeroes
 2. Overwrite with binary ones
@@ -30,50 +35,75 @@ A secure file deletion application built with Python and Tkinter that performs p
 6. Overwrite with random data
 7. Overwrite with random data
 
+### AES-256 Cryptographic Erasure (New)
+
+* Encrypts file contents using **AES-256 in GCM mode** with a random key.
+* The encrypted data is then written back to disk and securely deleted.
+* Provides modern, cryptographic-grade sanitization, especially useful for SSDs where overwriting may not reliably erase data.
+
+---
+
 ## 🚀 How to Use
 
-1. **Launch the Application**  
-   Run the script using Python 3.x:
+1. **Launch the Application**
+   Run the script using Python 3.11+:
 
    ```bash
    python Delete_App.py
    ```
 
-2. **Select Files or Folders**  
-   Use the **"Select Files"** or **"Select Folder"** buttons to choose what you want to permanently delete.
+2. **Select Files or Folders**
+   Use the **"Select Files"** or **"Select Folder"** buttons to choose what you want to erase.
 
-3. **Choose Deletion Phase**  
-   Select either **3-Phase** or **7-Phase** overwrite mode.
+3. **Choose Erasure Method**
 
-4. **Start Deletion**  
-   Click **"OK"** to begin the secure deletion process. Logs and progress will be shown in real-time.
+   * **DoD 3-Pass**
+   * **DoD 7-Pass**
+   * **Cryptographic Erasure (AES-256)**
 
-5. **Completion**  
+4. **Start Deletion**
+   Click **"OK"** to begin the process. Logs and progress will be shown in real-time.
+
+5. **Completion**
    A message box will confirm when the deletion is complete.
+
+---
 
 ## 🧰 Requirements
 
-- Python 3.6 or higher
-- Tkinter (comes bundled with standard Python distributions)
+* Python 3.11 or higher
+* Tkinter (bundled with Python standard library)
+* PyCryptodome (`pip install pycryptodome`)
+
+---
 
 ## 📁 Project Structure
 
 ```
 .
-├── Delete_App.py        # Main application GUI
-├── DODDeletion.py       # Core logic for secure deletion
-├── deletion_log.txt     # Log file of all operations
-└── README.md            # Project overview and instructions
+├── Delete_App.py            # Main application GUI
+├── DODDeletion.py           # Core logic for DoD overwrite deletion
+├── CryptographicErasure.py  # AES-256 Cryptographic Erasure handler
+├── AESCipher.py             # AES-256 encryption/decryption implementation
+├── deletion_log.txt         # Log file of all operations
+└── README.md                # Project overview and instructions
 ```
+
+---
 
 ## 📝 Logging
 
-All deletion activity is logged in `deletion_log.txt`, including:
+All deletion/encryption activity is logged in `deletion_log.txt`, including:
 
-- Files/folders processed
-- Overwrite passes completed
-- Errors or failures (if any)
+* Files/folders processed
+* Overwrite/encryption passes completed
+* Errors or failures (if any)
+
+---
 
 ## ⚠️ Disclaimer
 
 This tool is designed for **secure and permanent data deletion**. Once files or folders are deleted using this tool, **they cannot be recovered**. Please use responsibly.
+
+---
+
