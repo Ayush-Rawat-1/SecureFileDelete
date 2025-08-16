@@ -43,6 +43,35 @@ A secure file sanitization and deletion tool built with **Python**. It supports 
 
 ---
 
+## 🔐 Use Cases
+
+### 🟢 DoD 3-Pass Method
+
+* Best for **regular users** who want strong but **fast** secure deletion
+* Suitable for **non-sensitive personal files** (documents, images, temporary files)
+* Provides a good balance between speed and security
+
+---
+
+### 🟡 DoD 7-Pass Method
+
+* Recommended for **highly sensitive data** where stronger sanitization is required
+* Common in **corporate or government environments** with strict data policies
+* Ideal for **HDDs (magnetic drives)** where overwriting is very effective
+* More secure than 3-pass but slower
+
+---
+
+### 🔴 AES-256 Cryptographic Erasure
+
+* Best for **modern storage devices (SSDs/Flash memory)** where overwriting may not be reliable
+* Suitable for **confidential files** such as legal, financial, or healthcare data
+* Provides **cryptographic-grade sanitization** — recovery is computationally infeasible
+* Faster than multi-pass overwriting on large SSDs
+* Highly suitable for cloud storage, where physical overwrite methods cannot be guaranteed
+
+---
+
 ## 🚀 How to Use
 
 1. **Launch the Application**
